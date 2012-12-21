@@ -8,29 +8,29 @@ http://www.dgp.toronto.edu/people/stam/reality/Research/pdf/GDC03.pdf
 
 ### Controls:
 
-'X' key - add source at center
-'W' key - apply force x-axis
-'D' key - apply force y-axis
-'S' key - apply force z-axis
-'C' key - clear simulation
-'V' key - show/hide velocities
-'A' Key - show/hide the XYZ axis
-'H' key - show/hide this help message
-Left click  - pan from location
-Right click - rotate cube
-ESC - quit
+* 'X' key - add source at center
+* 'W' key - apply force x-axis
+* 'D' key - apply force y-axis
+* 'S' key - apply force z-axis
+* 'C' key - clear simulation
+* 'V' key - show/hide velocities
+* 'A' Key - show/hide the XYZ axis
+* 'H' key - show/hide this help message
+* Left click  - pan from location
+* Right click - rotate cube
+* ESC - quit
 
-### Potential Issues:
+### Potential Issues
 
-**Nothing's Happening:**
+**Nothing's Happening**
 
 Be sure to press X a few times to add fluid. Then tap W, S, or D repeatedly. It could also be it's running way to slow on your computer.
 
-**It runs really slow:**
+**It runs really slow**
 
 It takes exponentially more time to render larger the grid size gets. Try lowering the value of SIZE at the beginning of main.c. Increasing SIZE does make it look better but at the cost of performance.
 
-**Compiling:**
+**Compiling**
 
 The code is all in c using GLUT, so it should be quite portable. I've included a simple makefile which I used.
 
