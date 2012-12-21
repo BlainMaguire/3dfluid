@@ -24,7 +24,7 @@ http://www.dgp.toronto.edu/people/stam/reality/Research/pdf/GDC03.pdf
 
 **Nothing's Happening**
 
-Be sure to press X a few times to add fluid. Then tap W, S, or D repeatedly. It could also be it's running way to slow on your computer.
+Be sure to press X a few times to add fluid. Then tap W, S, or D repeatedly. It could also be it's running way too slow on your computer.
 
 **It runs really slow**
 
