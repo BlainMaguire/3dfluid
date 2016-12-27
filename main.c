@@ -11,7 +11,7 @@
 #define WINDOW_TITLE "Fluid"
 #define WINDOW_WIDTH 768
 #define WINDOW_HEIGHT 768
-#define SIZE 28 // Best not to raise this very high
+#define SIZE 42 // Best not to raise this very high
 
 extern void dens_step ( int M, int N, int O, float * x, float * x0, float * u, float * v, float * w, float diff, float dt );
 extern void vel_step (int M, int N, int O, float * u, float * v,  float * w, float * u0, float * v0, float * w0, float visc, float dt );
@@ -285,8 +285,8 @@ static void update(int state, int ox, int nx, int oy, int ny)
 		rot[1] = clamp(rot[1]);
 		break;
 	case PAN:
-		trans[0] -= dx / 5000.0f;
-		trans[1] -= dy / 5000.0f;
+		trans[0] -= dx / 15000.0f;
+		trans[1] -= dy / 15000.0f;
 		break;
 	case ZOOM:
 		trans[2] -= (dx+dy) / 100.0f;
