@@ -2,6 +2,8 @@
 
 A 3D Real Time Fluid Solver based on Jos Stam's 2D fluid solver (stable Navier-Stokes solver).
 
+[![Video Demonstration](http://img.youtube.com/vi/v4unokVKvrg/0.jpg)](https://www.youtube.com/watch?v=v4unokVKvrg "Video Demonstration")
+
 Reference: Jos Stam, "Real-Time Fluid Dynamics for Games". Proceedings of the Game Developer Conference, March 2003.
 
 http://www.dgp.toronto.edu/people/stam/reality/Research/pdf/GDC03.pdf
