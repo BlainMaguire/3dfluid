@@ -21,10 +21,11 @@ void add_source ( int M, int N, int O, float * x, float * s, float dt )
 void  set_bnd ( int M, int N, int O, int b, float * x )
 {
 
-        // bounds are cells at faces of the cube
+	// bounds are cells at faces of the cube
 
 	int i, j;
 
+	//setting faces
 	for ( i=1 ; i<=M ; i++ ) {
 		for ( j=1 ; j<=N ; j++ ) {
 			x[IX(i,j,0 )] = b==3 ? -x[IX(i,j,1)] : x[IX(i,j,1)];
@@ -32,12 +33,12 @@ void  set_bnd ( int M, int N, int O, int b, float * x )
 		}
 	}
 
-    for ( i=1 ; i<=N ; i++ ) {
-        for ( j=1 ; j<=O ; j++ ) {
-            x[IX(0  ,i, j)] = b==1 ? -x[IX(1,i,j)] : x[IX(1,i,j)];
-            x[IX(M+1,i, j)] = b==1 ? -x[IX(M,i,j)] : x[IX(M,i,j)];
-        }
-    }
+	for ( i=1 ; i<=N ; i++ ) {
+		for ( j=1 ; j<=O ; j++ ) {
+			x[IX(0  ,i, j)] = b==1 ? -x[IX(1,i,j)] : x[IX(1,i,j)];
+			x[IX(M+1,i, j)] = b==1 ? -x[IX(M,i,j)] : x[IX(M,i,j)];
+		}
+	}
 
     for ( i=1 ; i<=M ; i++ ) {
         for ( j=1 ; j<=O ; j++ ) {
@@ -46,6 +47,29 @@ void  set_bnd ( int M, int N, int O, int b, float * x )
         }
     }
 
+	//Setting edges
+    for ( i=1; i<=M; i++) {
+        x[IX(i,  0,  0)] = 1.0/2.0*(x[IX(i,1,  0)]+x[IX(i,  0,  1)]);
+        x[IX(i,N+1,  0)] = 1.0/2.0*(x[IX(i,N,  0)]+x[IX(i,N+1,  1)]);
+        x[IX(i,  0,O+1)] = 1.0/2.0*(x[IX(i,0,  O)]+x[IX(i,  1,O+1)]);
+        x[IX(i,N+1,O+1)] = 1.0/2.0*(x[IX(i,N,O+1)]+x[IX(i,N+1,  O)]);
+    }
+    
+    for ( i=1; i<=N; i++) {
+        x[IX(0,  i,  0)] = 1.0/2.0*(x[IX(1,i,  0)]+x[IX(0,  i,  1)]);
+        x[IX(M+1,i,  0)] = 1.0/2.0*(x[IX(M,i,  0)]+x[IX(M+1,i,  1)]);
+        x[IX(0,  i,O+1)] = 1.0/2.0*(x[IX(0,i,  O)]+x[IX(1,  i,O+1)]);
+        x[IX(M+1,i,O+1)] = 1.0/2.0*(x[IX(M,i,O+1)]+x[IX(M+1,i,  O)]);
+    }
+    
+    for ( i=1; i<=O; i++) {
+        x[IX(0,  0,  i)] = 1.0/2.0*(x[IX(0,  1,i)]+x[IX(1,  0,  i)]);
+        x[IX(0,  N+1,i)] = 1.0/2.0*(x[IX(0,  N,i)]+x[IX(1,  N+1,i)]);
+        x[IX(M+1,0,  i)] = 1.0/2.0*(x[IX(M,  0,i)]+x[IX(M+1,1,  i)]);
+        x[IX(M+1,N+1,i)] = 1.0/2.0*(x[IX(M+1,N,i)]+x[IX(M,  N+1,i)]);
+    }
+
+	//setting corners
     x[IX(0  ,0, 0  )] = 1.0/3.0*(x[IX(1,0,0  )]+x[IX(0  ,1,0)]+x[IX(0 ,0,1)]);
     x[IX(0  ,N+1, 0)] = 1.0/3.0*(x[IX(1,N+1, 0)]+x[IX(0  ,N, 0)] + x[IX(0  ,N+1, 1)]);
 
