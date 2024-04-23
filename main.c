@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glut.h>
 
 #define IX(i,j,k) ((i)+(M+2)*(j) + (M+2)*(N+2)*(k)) 
 #define MAX(a,b)            (((a) > (b)) ? (a) : (b))
@@ -36,22 +36,16 @@ static float * dens, * dens_prev;
 
 static int dvel = 0;
 static int dhelp = 1;
-static int daxis = 0;
+static int daxis = 1;
 
 static int win_id;
 static int win_x = WINDOW_WIDTH; 
 static int  win_y = WINDOW_HEIGHT;
 static int mouse_down[3];
-static int omx, omy, mx, my;
-
-enum { 
-	PAN = 1,
-	ROTATE,				
-	ZOOM				
-};
+static int mx, my;
 
 GLfloat trans[3];
-GLfloat rot[2];				
+GLfloat azimuth = -45.f, elevation = 30.f;
 
 static void free_data ( void )
 {
@@ -264,43 +258,8 @@ static void draw_density ( void )
 	glEnd ();
 }
 
-float clamp(float x) {
-	return x > 360.0f ? x-360.0f : x < -360.0f ? x+=360.0f : x;
-}
-
-static void update(int state, int ox, int nx, int oy, int ny)
-{
-    /* ideally, these values should be expressed in terms of window xy
-    these magic numbers work for the sake of the demo,
-    but consider the case of resizing the window. */
-    
-	int dx = ox - nx;
-	int dy = ny - oy;
-
-	switch(state) {
-	case ROTATE:
-		rot[0] += (dy * 180.0f) / 15000.0f;
-		rot[1] -= (dx * 180.0f) / 15000.0f;
-		rot[0] = clamp(rot[0]);
-		rot[1] = clamp(rot[1]);
-		break;
-	case PAN:
-		trans[0] -= dx / 15000.0f;
-		trans[1] -= dy / 15000.0f;
-		break;
-	case ZOOM:
-		trans[2] -= (dx+dy) / 100.0f;
-		break;
-	}
-}
-
-
 int init(void)
 {
-
-	rot[0] = 30;
-	rot[1] = -45;
-
 	if ( !allocate_data () ) 
 		return (0);
 	clear_data ();
@@ -323,7 +282,7 @@ void draw_text(GLint x, GLint y, char* s, GLfloat r, GLfloat g, GLfloat b)
 	glPushMatrix();
 	glLoadIdentity();
 
-	gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
+	gluOrtho2D(0, win_x, 0, win_y);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
@@ -398,24 +357,13 @@ void sim_reset()
 	clear_data();
 }
 
-void reshape(int width, int height)
-{
-	glViewport(0, 0, width, height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(60.0, (float)width/height, 0.001, 100.0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glTranslatef(0.0f, 0.0f, -3.0f);
-}
-
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();
 	glTranslatef(trans[0], trans[1], trans[2]);
-	glRotatef(rot[0], 1.0f, 0.0f, 0.0f);
-	glRotatef(rot[1], 0.0f, 1.0f, 0.0f);
+	glRotatef(elevation, 1.0f, 0.0f, 0.0f);
+	glRotatef(azimuth, 0.0f, 1.0f, 0.0f);
 
 	// toggle display modes
 	if ( dvel ) draw_velocity ();
@@ -431,6 +379,14 @@ void display()
 
 static void reshape_func ( int width, int height )
 {
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60.0, (float)width/height, 0.1, 100.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0.0f, 0.0f, -3.0f);
+
 	glutSetWindow ( win_id );
 	glutReshapeWindow ( width, height );
 
@@ -474,37 +430,37 @@ static void key_func ( unsigned char key, int x, int y )
 		}
 }
 
-static void mouse_func ( int button, int state, int x, int y )
-{
-	omx = mx = x;
-	omx = my = y;
+static void mouse_func( int button, int state, int x, int y ) {
+	mx = x;
+	my = y;
 
 	mouse_down[button] = state == GLUT_DOWN;
 }
 
-static void motion_func ( int x, int y )
-{
-	omx = mx;
-	omy = my;
+static void motion_func ( int x, int y ) {
+	// when move mouse
+	float dx = x - mx;
+	float dy = y - my;
+
+	if( mouse_down[0] ) {
+		azimuth += dx * 0.1f;
+		elevation += dy * 0.1f;
+	}
+
+	if( mouse_down[1] ) {
+		trans[0] -= dx / 1500.0f;
+		trans[1] -= dy / 1500.0f;
+	}
+	
+	if( mouse_down[2] ) {
+		trans[2] -= (dx+dy) / 100.0f;
+	}
+
 	mx = x;
 	my = y;
 }
 
 static void idle_func (void ) {
-
-	// ZOOM state = PAN + ROTATE
-	int state = 0;
-
-	if (mouse_down[0]) {
-		state |= PAN;
-	}
-	
-	if (mouse_down[2]) {
-		state |= ROTATE;
-	}
-	
-	update(state,omx, omy, mx, my);
-
 	sim_main();
 	
 	glutPostRedisplay();
